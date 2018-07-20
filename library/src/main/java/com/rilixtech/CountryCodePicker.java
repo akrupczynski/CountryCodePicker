@@ -12,6 +12,7 @@ import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.telephony.TelephonyManager;
+import android.text.InputFilter;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -19,15 +20,16 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
 import android.widget.TextView;
-import io.michaelrocks.libphonenumber.android.NumberParseException;
-import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
-import io.michaelrocks.libphonenumber.android.Phonenumber;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import io.michaelrocks.libphonenumber.android.NumberParseException;
+import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
+import io.michaelrocks.libphonenumber.android.Phonenumber;
 
 /**
  * Created by hbb20 on 11/1/16.
@@ -59,6 +61,7 @@ public class CountryCodePicker extends RelativeLayout {
   private PhoneNumberUtil mPhoneUtil;
   private PhoneNumberWatcher mPhoneNumberWatcher;
   PhoneNumberInputValidityListener mPhoneNumberInputValidityListener;
+  private PhoneNumberFilter mPhoneNumberFilter;
 
   private AppCompatTextView mTvSelectedCountry;
   private TextView mRegisteredPhoneNumberTextView;
@@ -308,7 +311,7 @@ public class CountryCodePicker extends RelativeLayout {
     }
 
     if (getRegisteredPhoneNumberTextView() != null) {
-      setRegisteredPhoneNumberTextView(mTvSelectedCountry, selectedCountry.getIso().toUpperCase());
+      setRegisteredPhoneNumberTextView(mRegisteredPhoneNumberTextView, selectedCountry.getIso().toUpperCase());
     }
 
     if (!mHideNameCode) {
@@ -760,7 +763,17 @@ public class CountryCodePicker extends RelativeLayout {
     return mRegisteredPhoneNumberTextView;
   }
 
+  private void registerInputFilter(TextView phoneNumberTextView) {
+    if(mPhoneNumberFilter == null) {
+      mPhoneNumberFilter = new PhoneNumberFilter(mPhoneUtil, this);
+    }
+    phoneNumberTextView.setFilters( new InputFilter[]{mPhoneNumberFilter});
+  }
+
   void setRegisteredPhoneNumberTextView(TextView phoneNumberTextView) {
+    if(mRegisteredPhoneNumberTextView != phoneNumberTextView) {
+      registerInputFilter(phoneNumberTextView);
+    }
     this.mRegisteredPhoneNumberTextView = phoneNumberTextView;
     if (mIsEnablePhoneNumberWatcher) {
       if (mPhoneNumberWatcher == null) {
@@ -771,6 +784,9 @@ public class CountryCodePicker extends RelativeLayout {
   }
 
   void setRegisteredPhoneNumberTextView(TextView phoneNumberTextView, String countryNameCode) {
+    if(mRegisteredPhoneNumberTextView != phoneNumberTextView) {
+      registerInputFilter(phoneNumberTextView);
+    }
     this.mRegisteredPhoneNumberTextView = phoneNumberTextView;
     if (mIsEnablePhoneNumberWatcher) {
       if (mPhoneNumberWatcher == null) {
@@ -778,7 +794,9 @@ public class CountryCodePicker extends RelativeLayout {
         mRegisteredPhoneNumberTextView.addTextChangedListener(mPhoneNumberWatcher);
       } else {
         if (!mPhoneNumberWatcher.getPreviousCountryCode().equalsIgnoreCase(countryNameCode)) {
+          mRegisteredPhoneNumberTextView.removeTextChangedListener(mPhoneNumberWatcher);
           mPhoneNumberWatcher = new PhoneNumberWatcher(countryNameCode);
+          mRegisteredPhoneNumberTextView.addTextChangedListener(mPhoneNumberWatcher);
         }
       }
     }
