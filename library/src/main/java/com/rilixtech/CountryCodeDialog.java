@@ -15,7 +15,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
+
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -36,7 +38,7 @@ class CountryCodeDialog extends Dialog {
   private List<Country> mFilteredCountries;
   private InputMethodManager mInputMethodManager;
   private CountryCodeAdapter mAdapter;
-  private List<Country> mTempCountries;
+  private LinkedHashSet<Country> mTempCountries;
 
   CountryCodeDialog(CountryCodePicker countryCodePicker) {
     super(countryCodePicker.getContext());
@@ -172,7 +174,7 @@ class CountryCodeDialog extends Dialog {
 
   private List<Country> getFilteredCountries(String query) {
     if (mTempCountries == null) {
-      mTempCountries = new ArrayList<>();
+      mTempCountries = new LinkedHashSet<>();
     } else {
       mTempCountries.clear();
     }
@@ -195,7 +197,7 @@ class CountryCodeDialog extends Dialog {
         mTempCountries.add(country);
       }
     }
-    return mTempCountries;
+    return new ArrayList<>(mTempCountries);
   }
 
   public class ItemRecyclerViewClickListener implements View.OnClickListener {

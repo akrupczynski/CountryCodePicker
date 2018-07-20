@@ -52,4 +52,24 @@ public class Country {
         || getIso().toLowerCase().contains(query)
         || getPhoneCode().toLowerCase().contains(query);
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Country country = (Country) o;
+
+    if (!iso.equals(country.iso)) return false;
+    if (!phoneCode.equals(country.phoneCode)) return false;
+    return name.equals(country.name);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = iso.hashCode();
+    result = 31 * result + phoneCode.hashCode();
+    result = 31 * result + name.hashCode();
+    return result;
+  }
 }
