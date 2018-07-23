@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import java.util.List;
-
 import com.rilixtech.CountryCodeDialog.ItemRecyclerViewClickListener;
+
+import java.util.List;
 
 /**
  * Created by hbb20 on 11/1/16. item
@@ -39,8 +39,9 @@ class CountryCodeAdapter extends RecyclerView.Adapter<CountryCodeAdapter.Country
 
   @Override public void onBindViewHolder(CountryCodeViewHolder viewHolder, final int i) {
     final int position = viewHolder.getAdapterPosition();
-    viewHolder.setCountry(mCountries.get(position));
-    viewHolder.rlyMain.setOnClickListener(mListener);
+    Country country = mCountries.get(position);
+    viewHolder.setCountry(country);
+    viewHolder.rlyMain.setOnClickListener(country != null ? mListener : null);
   }
 
   @Override public int getItemCount() {
