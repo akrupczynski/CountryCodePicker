@@ -42,7 +42,7 @@ import io.michaelrocks.libphonenumber.android.Phonenumber;
  * Add checker for device network country code
  * Updated by Joielechong 4 June 2017
  */
-public class CountryCodePicker extends RelativeLayout {
+public class CountryCodePicker extends RelativeLayout implements PhoneNumberFilter.CountrySelector {
 
   private static String TAG = CountryCodePicker.class.getSimpleName();
 

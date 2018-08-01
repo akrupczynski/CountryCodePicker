@@ -11,11 +11,16 @@ import io.michaelrocks.libphonenumber.android.Phonenumber;
 public class PhoneNumberFilter implements InputFilter {
 
     private final PhoneNumberUtil phoneNumberUtil;
-    private final CountryCodePicker intlPhoneInput;
+    private final CountrySelector countrySelector;
 
-    public PhoneNumberFilter(PhoneNumberUtil phoneNumberUtil, CountryCodePicker intlPhoneInput) {
+    interface CountrySelector {
+        String getSelectedCountryNameCode();
+        String selectCountryAndReturnCarrierNumber(String fullNumber);
+    }
+
+    public PhoneNumberFilter(PhoneNumberUtil phoneNumberUtil, CountrySelector countrySelector) {
         this.phoneNumberUtil = phoneNumberUtil;
-        this.intlPhoneInput = intlPhoneInput;
+        this.countrySelector = countrySelector;
     }
 
     @Override
@@ -24,14 +29,10 @@ public class PhoneNumberFilter implements InputFilter {
         CharSequence filteredSource = filterNonDigits(source);
 
         try {
-            String selectedCountryNameCode = intlPhoneInput.getSelectedCountryNameCode();
+            String selectedCountryNameCode = countrySelector.getSelectedCountryNameCode();
             Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(source.toString(), selectedCountryNameCode);
             if(phoneNumberUtil.isValidNumber(phoneNumber)) {
-                String regionCode = phoneNumberUtil.getRegionCodeForNumber(phoneNumber);
-                if(regionCode != null) {
-                    intlPhoneInput.setCountryForNameCode(regionCode);
-                }
-                return phoneNumberUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.NATIONAL);
+                return countrySelector.selectCountryAndReturnCarrierNumber(phoneNumberUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164));
             }
         } catch (NumberParseException e) {
             //e.printStackTrace();
