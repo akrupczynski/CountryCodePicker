@@ -947,6 +947,7 @@ public class CountryCodePicker extends RelativeLayout {
    */
   public void setCountryPreference(String countryPreference) {
     this.mCountryPreference = countryPreference;
+    refreshPreferredCountries();
   }
 
   /**
