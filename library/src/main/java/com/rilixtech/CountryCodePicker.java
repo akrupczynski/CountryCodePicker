@@ -307,7 +307,7 @@ public class CountryCodePicker extends RelativeLayout {
     this.mSelectedCountry = selectedCountry;
     //as soon as country is selected, textView should be updated
     if (selectedCountry == null) {
-      selectedCountry = CountryUtils.getByCode(getContext(), mPreferredCountries, mDefaultCountryCode);
+      selectedCountry = CountryUtils.getByCode(getContext(), mPreferredCountries, mCustomMasterCountriesList, mDefaultCountryCode);
     }
 
     if (getRegisteredPhoneNumberTextView() != null) {
@@ -549,7 +549,7 @@ public class CountryCodePicker extends RelativeLayout {
    * if you want to set JP +81(Japan) as default country, mDefaultCountryCode =  81
    */
   @Deprecated public void setDefaultCountryUsingPhoneCode(int defaultCountryCode) {
-    Country defaultCountry = CountryUtils.getByCode(getContext(), mPreferredCountries, defaultCountryCode);
+    Country defaultCountry = CountryUtils.getByCode(getContext(), mPreferredCountries, mCustomMasterCountriesList, defaultCountryCode);
     //if correct country is found, set the country
     if (defaultCountry != null) {
       this.mDefaultCountryCode = defaultCountryCode;
@@ -713,10 +713,10 @@ public class CountryCodePicker extends RelativeLayout {
    * If you want to set JP +81(Japan), countryCode= 81
    */
   public void setCountryForPhoneCode(int countryCode) {
-    Country country = CountryUtils.getByCode(getContext(), mPreferredCountries, countryCode);
+    Country country = CountryUtils.getByCode(getContext(), mPreferredCountries, mCustomMasterCountriesList, countryCode);
     if (country == null) {
       if (mDefaultCountry == null) {
-        mDefaultCountry = CountryUtils.getByCode(getContext(), mPreferredCountries, mDefaultCountryCode);
+        mDefaultCountry = CountryUtils.getByCode(getContext(), mPreferredCountries, mCustomMasterCountriesList, mDefaultCountryCode);
       }
       setSelectedCountry(mDefaultCountry);
     } else {
@@ -735,7 +735,7 @@ public class CountryCodePicker extends RelativeLayout {
     Country country = CountryUtils.getByNameCodeFromAllCountries(getContext(), countryNameCode);
     if (country == null) {
       if (mDefaultCountry == null) {
-        mDefaultCountry = CountryUtils.getByCode(getContext(), mPreferredCountries, mDefaultCountryCode);
+        mDefaultCountry = CountryUtils.getByCode(getContext(), mPreferredCountries, mCustomMasterCountriesList, mDefaultCountryCode);
       }
       setSelectedCountry(mDefaultCountry);
     } else {
@@ -833,7 +833,7 @@ public class CountryCodePicker extends RelativeLayout {
    * number is optional.
    */
   public void setFullNumber(String fullNumber) {
-    Country country = CountryUtils.getByNumber(getContext(), mPreferredCountries, fullNumber);
+    Country country = CountryUtils.getByNumber(getContext(), mPreferredCountries, mCustomMasterCountriesList, fullNumber);
     setSelectedCountry(country);
     String carrierNumber = detectCarrierNumber(fullNumber, country);
     if (mRegisteredPhoneNumberTextView != null) {
@@ -841,6 +841,12 @@ public class CountryCodePicker extends RelativeLayout {
     } else {
       Log.w(TAG, getContext().getString(R.string.error_unregister_carrier_number));
     }
+  }
+
+  public String selectCountryAndReturnCarrierNumber(String fullNumber) {
+    Country country = CountryUtils.getByNumber(getContext(), mPreferredCountries, mCustomMasterCountriesList, fullNumber);
+    setSelectedCountry(country);
+    return detectCarrierNumber(fullNumber, country);
   }
 
   /**

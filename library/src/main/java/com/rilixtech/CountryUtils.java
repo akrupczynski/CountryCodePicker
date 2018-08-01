@@ -1,8 +1,8 @@
 package com.rilixtech;
 
 import android.content.Context;
-
 import android.support.annotation.DrawableRes;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1459,6 +1459,10 @@ class CountryUtils {
    * null for 2956635321 ( as neither of "2", "29" and "295" matches any country code)
    */
   static Country getByNumber(Context context, List<Country> preferredCountries, String fullNumber) {
+    return  getByNumber(context, preferredCountries, null, fullNumber);
+  }
+
+  static Country getByNumber(Context context, List<Country> preferredCountries, List<Country> masterCountries, String fullNumber) {
     int firstDigit;
     if (fullNumber.length() != 0) {
       if (fullNumber.charAt(0) == '+') {
@@ -1469,7 +1473,7 @@ class CountryUtils {
       Country country;
       for (int i = firstDigit; i < firstDigit + 4; i++) {
         String code = fullNumber.substring(firstDigit, i);
-        country = getByCode(context, preferredCountries, code);
+        country = getByCode(context, preferredCountries, masterCountries, code);
         if (country != null) {
           return country;
         }
@@ -1486,8 +1490,8 @@ class CountryUtils {
    * @return Country that has phone code as @param code.
    * or returns null if no country matches given code.
    */
-  static Country getByCode(Context context, List<Country> preferredCountries, int code) {
-    return getByCode(context, preferredCountries, code + "");
+  static Country getByCode(Context context, List<Country> preferredCountries,  List<Country> masterCountries, int code) {
+    return getByCode(context, preferredCountries, masterCountries, code + "");
   }
 
   /**
@@ -1500,11 +1504,19 @@ class CountryUtils {
    * if same code (e.g. +1) available for more than one country ( US, canada) , this function will
    * return preferred country.
    */
-  private static Country getByCode(Context context, List<Country> preferredCountries, String code) {
+  private static Country getByCode(Context context, List<Country> preferredCountries, List<Country> masterCountries, String code) {
 
     //check in preferred countries first
     if (preferredCountries != null && !preferredCountries.isEmpty()) {
       for (Country country : preferredCountries) {
+        if (country.getPhoneCode().equals(code)) {
+          return country;
+        }
+      }
+    }
+
+    if( masterCountries != null && !masterCountries.isEmpty()) {
+      for (Country country : masterCountries) {
         if (country.getPhoneCode().equals(code)) {
           return country;
         }
