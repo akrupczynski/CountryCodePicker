@@ -489,6 +489,7 @@ public class CountryCodePicker extends RelativeLayout {
    */
   public void setCustomMasterCountries(String customMasterCountries) {
     this.mCustomMasterCountries = customMasterCountries;
+    refreshCustomMasterList();
   }
 
   /**
