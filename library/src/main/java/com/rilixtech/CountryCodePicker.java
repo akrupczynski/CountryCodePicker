@@ -1133,9 +1133,10 @@ public class CountryCodePicker extends RelativeLayout implements PhoneNumberFilt
       if (phoneNumber != null) {
         Log.d(TAG, "setPhoneNumberHint called");
         Log.d(TAG, "mSelectedCountry.getIso() = " + mSelectedCountry.getIso());
-        Log.d(TAG, "hint = " + mPhoneUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.NATIONAL));
 
-        String hint =mPhoneUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.NATIONAL);
+        String hint = detectCarrierNumber(mPhoneUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164), mSelectedCountry);
+        Log.d(TAG, "hint = " + hint);
+
         if(mRegisteredPhoneNumberTextView.getHint() != null) {
           mRegisteredPhoneNumberTextView.setHint("");
         }
