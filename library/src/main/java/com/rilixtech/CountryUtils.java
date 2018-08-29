@@ -1464,7 +1464,7 @@ class CountryUtils {
 
   static Country getByNumber(Context context, List<Country> preferredCountries, List<Country> masterCountries, String fullNumber) {
     int firstDigit;
-    if (fullNumber.length() != 0) {
+    if (fullNumber.length() > 0) {
       if (fullNumber.charAt(0) == '+') {
         firstDigit = 1;
       } else {
@@ -1472,6 +1472,9 @@ class CountryUtils {
       }
       Country country;
       for (int i = firstDigit; i < firstDigit + 4; i++) {
+        if(i > fullNumber.length()) {
+          break;
+        }
         String code = fullNumber.substring(firstDigit, i);
         country = getByCode(context, preferredCountries, masterCountries, code);
         if (country != null) {
