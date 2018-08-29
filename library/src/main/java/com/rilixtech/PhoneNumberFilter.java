@@ -54,4 +54,19 @@ public class PhoneNumberFilter implements InputFilter {
         }
         return sb.toString();
     }
+
+    static String filterNonDigitsAllowPlusSignOnFirstPosition(@Nullable CharSequence source) {
+        StringBuilder sb = new StringBuilder();
+        if(source != null) {
+            for (int i = 0; i < source.length(); i++) {
+                char c = source.charAt(i);
+                if(Character.isDigit(c)) {
+                    sb.append(c);
+                } else if(i==0 && c == '+') {
+                    sb.append(c);
+                }
+            }
+        }
+        return sb.toString();
+    }
 }

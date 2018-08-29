@@ -31,6 +31,8 @@ import io.michaelrocks.libphonenumber.android.NumberParseException;
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
 import io.michaelrocks.libphonenumber.android.Phonenumber;
 
+import static com.rilixtech.PhoneNumberFilter.filterNonDigitsAllowPlusSignOnFirstPosition;
+
 /**
  * Created by hbb20 on 11/1/16.
  *
@@ -834,9 +836,12 @@ public class CountryCodePicker extends RelativeLayout implements PhoneNumberFilt
    * number is optional.
    */
   public void setFullNumber(String fullNumber) {
-    Country country = CountryUtils.getByNumber(getContext(), mPreferredCountries, mCustomMasterCountriesList, fullNumber);
-    setSelectedCountry(country);
-    String carrierNumber = detectCarrierNumber(fullNumber, country);
+    String fullNumberFiltered = filterNonDigitsAllowPlusSignOnFirstPosition(fullNumber);
+    Country country = CountryUtils.getByNumber(getContext(), mPreferredCountries, mCustomMasterCountriesList, fullNumberFiltered);
+    if(country != null) {
+      setSelectedCountry(country);
+    }
+    String carrierNumber = detectCarrierNumber(fullNumberFiltered, country);
     if (mRegisteredPhoneNumberTextView != null) {
       mRegisteredPhoneNumberTextView.setText(carrierNumber);
     } else {
