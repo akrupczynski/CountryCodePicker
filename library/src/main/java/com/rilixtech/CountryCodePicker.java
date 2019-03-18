@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.support.annotation.IdRes;
+import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
@@ -97,6 +99,8 @@ public class CountryCodePicker extends RelativeLayout implements PhoneNumberFilt
   private int mTextColor = DEFAULT_TEXT_COLOR;
 
   private int mDialogTextColor = DEFAULT_TEXT_COLOR;
+
+  @StringRes private int mHint = -1;
 
   // Font typeface
   private Typeface mTypeFace;
@@ -291,6 +295,16 @@ public class CountryCodePicker extends RelativeLayout implements PhoneNumberFilt
     if (mBackgroundColor != Color.TRANSPARENT) {
       mRlyHolder.setBackgroundColor(mBackgroundColor);
     }
+  }
+
+  /**
+   * Sets custom hint.
+   *
+   * @param hint string resourceId
+   */
+  public void setCustomHint(@StringRes int hint) {
+    this.mHint = hint;
+    enableHint(true);
   }
 
   private Country getDefaultCountry() {
@@ -1139,7 +1153,9 @@ public class CountryCodePicker extends RelativeLayout implements PhoneNumberFilt
         Log.d(TAG, "setPhoneNumberHint called");
         Log.d(TAG, "mSelectedCountry.getIso() = " + mSelectedCountry.getIso());
 
-        String hint = detectCarrierNumber(mPhoneUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164), mSelectedCountry);
+        String hint = mHint == -1 ?
+                detectCarrierNumber(mPhoneUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164), mSelectedCountry) :
+                getResources().getString(mHint);
         Log.d(TAG, "hint = " + hint);
 
         if(mRegisteredPhoneNumberTextView.getHint() != null) {
