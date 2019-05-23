@@ -1,6 +1,7 @@
 package com.rilixtech;
 
 import android.annotation.TargetApi;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -112,6 +113,8 @@ public class CountryCodePicker extends RelativeLayout implements PhoneNumberFilt
 
   private OnCountryChangeListener mOnCountryChangeListener;
 
+  private MutableLiveData<String> fullNumberWithPlus = new MutableLiveData<>();
+
   /**
    * interface to set change listener
    */
@@ -149,6 +152,10 @@ public class CountryCodePicker extends RelativeLayout implements PhoneNumberFilt
     super(context, attrs, defStyleAttr, defStyleRes);
       if(!isInEditMode())
           init(attrs);
+  }
+
+  public MutableLiveData<String> getFullNumberWithPlusMutable() {
+    return fullNumberWithPlus;
   }
 
   private void init(AttributeSet attrs) {
@@ -361,6 +368,8 @@ public class CountryCodePicker extends RelativeLayout implements PhoneNumberFilt
     if (mIsHintEnabled) {
       setPhoneNumberHint();
     }
+
+    fullNumberWithPlus.postValue(getFullNumberWithPlus());
   }
 
   boolean isKeyboardAutoPopOnSearch() {
@@ -1207,6 +1216,7 @@ public class CountryCodePicker extends RelativeLayout implements PhoneNumberFilt
         }
         lastValidity = validity;
       }
+      fullNumberWithPlus.postValue(getFullNumberWithPlus());
     }
   }
 
